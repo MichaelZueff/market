@@ -1,0 +1,19 @@
+<Context reloadable="true" backgroundProcessorDelay="1">
+  <!-- 
+    maxActive: Maximum number of dB connections in pool. Set to -1 for no limit.
+    maxIdle: Maximum number of idle dB connections to retain in pool. Set to -1 for no limit.
+    maxWait: Maximum milliseconds to wait for a dB connection to become available
+             Set to -1 to wait indefinitely.
+  -->
+<Resource name="jdbc/market"
+auth="Container"
+type="javax.sql.DataSource"
+maxTotal="100"
+maxIdle="30"
+username="econtrol"
+password="19643258"
+driverClassName="net.sf.log4jdbc.DriverSpy"
+initialSize="10"
+url="jdbc:log4jdbc:oracle:thin:@oracle.tshok.ru:1521:orcldb"/>
+  <!--driverClassName="net.sf.log4jdbc.DriverSpy"-->
+</Context>
