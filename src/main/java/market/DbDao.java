@@ -32,12 +32,18 @@ public class DbDao {
     }
 
     String getResp(String sql, String req) throws SQLException {
-        try (Connection dbConnection = pool.getConnection();
-             CallableStatement cs = dbConnection.prepareCall(sql)) {
+        LOG.debug("getConnection start");
+        try (Connection dbConnection = pool.getConnection()) {
+            LOG.debug("getConnection end");
+            CallableStatement cs = dbConnection.prepareCall(sql);
+            LOG.debug("prepareCall end");
             cs.registerOutParameter(1, Types.CLOB);
             cs.setString(2, req);
             cs.execute();
             return cs.getString(1);
+        } catch (Exception e) {
+            LOG.error("connection error ", e);
+            return null;
         }
     }
 

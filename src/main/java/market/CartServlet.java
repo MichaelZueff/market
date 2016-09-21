@@ -15,7 +15,9 @@ public class CartServlet extends AuthServlet {
 
     void initDataPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            String respData = db.getResp("{? = call PARTNER_MARKET.GET_ORDER_INFO(?)}", getRequestBody(req));
+            String reqData = getRequestBody(req);
+            LOG.debug("/cart read request body");
+            String respData = db.getResp("{? = call PARTNER_MARKET.GET_ORDER_INFO(?)}", reqData);
             writeResponseBody(resp, respData);
         } catch (SQLException e) {
             LOG.error("Failed to get order info");
