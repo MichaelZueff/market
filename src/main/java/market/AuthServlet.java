@@ -9,11 +9,25 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.sql.SQLException;
 
 abstract class AuthServlet extends HttpServlet {
     private final static String TOKEN = "710000015653998B";
     protected static final Logger LOG = LoggerFactory.getLogger(AuthServlet.class);
-    protected DbDao db = new DbDao();
+    protected OracleDao db = new OracleDao();
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        MysqlDao mysql = new MysqlDao();
+        String sql = "select count(*) from item";
+
+        try {
+            mysql.execute(sql, (rs) -> System.out.println(rs.getInt(1)));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -32,7 +46,7 @@ abstract class AuthServlet extends HttpServlet {
         return req.getParameter("auth-token") != null && req.getParameter("auth-token").equals(TOKEN);
     }
 
-    protected String getRequestBody(HttpServletRequest req) {
+    protected String getRequestBody(HttpServletRequest req) throws UnsupportedEncodingException {
         try {
             // Read from request
             StringBuilder buffer = new StringBuilder();
