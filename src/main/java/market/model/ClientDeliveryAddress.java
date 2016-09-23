@@ -3,7 +3,7 @@ package market.model;
 /**
  * Created by PerevalovaMA on 19.09.2016.
  */
-public class Delivery {
+public class ClientDeliveryAddress {
     private Address address;
     private Region region;
 
@@ -11,15 +11,7 @@ public class Delivery {
         return address;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
     public Region getRegion() {
         return region;
-    }
-
-    public void setRegion(Region region) {
-        this.region = region;
     }
 }

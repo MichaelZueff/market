@@ -63,7 +63,7 @@ abstract class AuthServlet extends HttpServlet {
     }
 
     protected void writeResponseBody(HttpServletResponse resp, String data) throws IOException {
-        resp.setContentType("application/xml; charset=UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
         resp.getWriter().write(data);
     }
 }

@@ -24,20 +24,4 @@ public class Region {
     public Region getParent() {
         return parent;
     }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setParent(Region parent) {
-        this.parent = parent;
-    }
 }

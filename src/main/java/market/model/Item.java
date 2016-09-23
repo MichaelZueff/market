@@ -1,14 +1,43 @@
 package market.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
+
 /**
  * Created by PerevalovaMA on 19.09.2016.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Item {
     private int feedId;
     private String offerId;
-    private String feedCategoryId;
-    private String offerName;
-    private int count;
+    private int orderCount;
+    private List<Remains> remains;
+    private int price;
+    private boolean isDelivery;
+
+    public int getCount() {
+        int warehouseCount = 0;
+        int storesCount = 0;
+        for (Remains r: remains) {
+            if (r.getStoreId() == 189) {
+                warehouseCount += r.getType() == 1 ? r.getCount() - 1 : r.getCount();
+            } else {
+                storesCount += r.getType() == 1 ? r.getCount() - 1 : r.getCount();
+            }
+        }
+
+        if (warehouseCount > 0) {
+            return warehouseCount;
+        } else {
+            return storesCount;
+        }
+    }
+
+    public ItemResponse getItemResponse() {
+        return new ItemResponse(feedId, offerId, price, getCount(), isDelivery);
+    }
 
     public int getFeedId() {
         return feedId;
@@ -18,35 +47,32 @@ public class Item {
         return offerId;
     }
 
-    public String getFeedCategoryId() {
-        return feedCategoryId;
+    @JsonProperty("count")
+    public int getOrderCount() {
+        return orderCount;
     }
 
-    public String getOfferName() {
-        return offerName;
+    public List<Remains> getRemains() {
+        return remains;
     }
 
-    public int getCount() {
-        return count;
+    public void setRemains(List<Remains> remains) {
+        this.remains = remains;
     }
 
-    public void setFeedId(int feedId) {
-        this.feedId = feedId;
+    public int getPrice() {
+        return price;
     }
 
-    public void setOfferId(String offerId) {
-        this.offerId = offerId;
+    public void setPrice(int price) {
+        this.price = price;
     }
 
-    public void setFeedCategoryId(String feedCategoryId) {
-        this.feedCategoryId = feedCategoryId;
+    public boolean isDelivery() {
+        return isDelivery;
     }
 
-    public void setOfferName(String offerName) {
-        this.offerName = offerName;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
+    public void setDelivery(boolean delivery) {
+        isDelivery = delivery;
     }
 }
