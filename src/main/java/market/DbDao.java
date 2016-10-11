@@ -31,12 +31,31 @@ public class DbDao {
         }
     }
 
-    String getResp(String sql, String req) throws SQLException {
-        LOG.debug("getConnection start");
+    private Response getResponse(String procedureName, String requestBody) {
         try (Connection dbConnection = pool.getConnection()) {
-            LOG.debug("getConnection end");
+            CallableStatement cs = dbConnection.prepareCall("{? = call PARTNER_MARKET." + procedureName + "(?, ?)}");
+            cs.registerOutParameter(1, Types.INTEGER);
+            cs.setString(2, requestBody);
+            cs.registerOutParameter(3, Types.VARCHAR);
+            cs.execute();
+            return new Response(cs.getInt(1), cs.getString(3));
+        } catch (Exception e) {
+            LOG.error("sql error ", e);
+            return new Response(500, null);
+        }
+    }
+
+    Response createOrder(String requestBody) {
+        return getResponse("CREATE_ORDER", requestBody);
+    }
+
+    Response changeOrderStatus(String requestBody) {
+        return getResponse("CHANGE_ORDER_STATUS", requestBody);
+    }
+
+    String getResp(String sql, String req) throws SQLException {
+        try (Connection dbConnection = pool.getConnection()) {
             CallableStatement cs = dbConnection.prepareCall(sql);
-            LOG.debug("prepareCall end");
             cs.registerOutParameter(1, Types.CLOB);
             cs.setString(2, req);
             cs.execute();
