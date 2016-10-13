@@ -55,10 +55,13 @@ public class DbDao {
 
     String getResp(String sql, String req) throws SQLException {
         try (Connection dbConnection = pool.getConnection()) {
+            LOG.debug("Connection opened");
             CallableStatement cs = dbConnection.prepareCall(sql);
             cs.registerOutParameter(1, Types.CLOB);
             cs.setString(2, req);
+            LOG.debug("SQL execute start");
             cs.execute();
+            LOG.debug("SQL execute end");
             return cs.getString(1);
         } catch (Exception e) {
             LOG.error("connection error ", e);
