@@ -13,11 +13,12 @@ import java.io.IOException;
 public class OrderStatusServlet extends AuthServlet {
 
     void initDataPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Response response = db.changeOrderStatus(getRequestBody(req));
+        Response response = DbDao.changeOrderStatus(getRequestBody(req));
 
         if (response.getCode() != 200) {
             LOG.error(req.getRequestURI() + " failed to change order status");
-            resp.sendError(response.getCode(), response.getBody());
         }
+
+        writeResponse(resp, response);
     }
 }

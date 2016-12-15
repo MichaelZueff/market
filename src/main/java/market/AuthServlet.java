@@ -9,11 +9,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
 
 abstract class AuthServlet extends HttpServlet {
-    private final static String TOKEN = "710000015653998B";
     protected static final Logger LOG = LoggerFactory.getLogger(AuthServlet.class);
-    protected DbDao db = new DbDao();
+    private Set<String> authKeys = new HashSet<>();
+
+    public AuthServlet() {
+        updateAuth();
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -29,7 +35,21 @@ abstract class AuthServlet extends HttpServlet {
     abstract void initDataPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException;
 
     private boolean auth(HttpServletRequest req) throws IOException, ServletException {
-        return req.getParameter("auth-token") != null && req.getParameter("auth-token").equals(TOKEN);
+        return req.getParameter("auth-token") != null && authKeys.contains(req.getParameter("auth-token"));
+    }
+
+    protected void updateAuth() {
+        for (int i = 0; i <= 5; i++) {
+            try {
+                authKeys = DbDao.getAuthKeys();
+            } catch (SQLException e) {
+                LOG.error("Failed to get auth keys", e);
+            }
+            if (authKeys.size() > 0) {
+                LOG.info("Auth keys updated, size " + authKeys.size());
+                break;
+            }
+        }
     }
 
     protected String getRequestBody(HttpServletRequest req) {
@@ -48,8 +68,18 @@ abstract class AuthServlet extends HttpServlet {
         return null;
     }
 
-    protected void writeResponseBody(HttpServletResponse resp, String data) throws IOException {
-        resp.setContentType("application/xml; charset=UTF-8");
-        resp.getWriter().write(data);
+    protected void writeResponse(HttpServletResponse resp, Response response) throws IOException {
+        if (response.getCode() == 200) {
+            writeResponseBody(resp, response.getBody());
+        } else {
+            resp.sendError(response.getCode(), response.getBody());
+        }
+    }
+
+    private void writeResponseBody(HttpServletResponse resp, String data) throws IOException {
+        if (data != null) {
+            resp.setContentType("application/xml; charset=UTF-8");
+            resp.getWriter().write(data);
+        }
     }
 }

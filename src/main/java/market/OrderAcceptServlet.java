@@ -11,15 +11,15 @@ import java.io.IOException;
  */
 @WebServlet({"/order/accept"})
 public class OrderAcceptServlet extends AuthServlet {
-    void initDataPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Response response = db.createOrder(getRequestBody(req));
 
-        if (response.getCode() == 200) {
-            writeResponseBody(resp, response.getBody());
-        } else {
+    void initDataPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Response response = DbDao.createOrder(getRequestBody(req));
+
+        if (response.getCode() != 200) {
             LOG.error(req.getRequestURI() + " failed to create the order");
-            resp.sendError(response.getCode(), response.getBody());
         }
+
+        writeResponse(resp, response);
     }
 }
 

@@ -14,14 +14,12 @@ import java.sql.SQLException;
 public class CartServlet extends AuthServlet {
 
     void initDataPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try {
-            String reqData = getRequestBody(req);
-            LOG.debug("/cart read request body");
-            String respData = db.getResp("{? = call PARTNER_MARKET.GET_ORDER_INFO(?)}", reqData);
-            writeResponseBody(resp, respData);
-        } catch (SQLException e) {
-            LOG.error("Failed to get order info");
-            resp.sendError(500);
+        Response response = DbDao.getOrderInfo(getRequestBody(req));
+
+        if (response.getCode() != 200)  {
+            LOG.error(req.getRequestURI() + " failed to get order info");
         }
+
+        writeResponse(resp, response);
     }
 }
